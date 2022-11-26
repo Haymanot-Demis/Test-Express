@@ -5,6 +5,7 @@ const path = require('path');
 const dishRouter = require('./routes/dishRouter');
 const promoRouter = require('./routes/promoRouter');
 const leaderRouter = require('./routes/leaderRouter');
+const { op } = require('./controller/Connetion')
 
 app.use(bodyParser.json());
 const publicfolder = path.join(__dirname, 'public');
@@ -13,12 +14,13 @@ app.use('/dishes', dishRouter);
 app.use('/promotions', promoRouter)
 app.use('/leaders', leaderRouter)
 
-// app.all('/dishes', (req, res, next) => {
-//         res.statusCode = 200;
-//         res.setHeader('Content-Type', 'text/html');
-//         next();
-//     })
-// get request 
+op()
+    // app.all('/dishes', (req, res, next) => {
+    //         res.statusCode = 200;
+    //         res.setHeader('Content-Type', 'text/html');
+    //         next();
+    //     })
+    // get request 
 app.get("/", (req, res) => {
     res.redirect('/home.html');
 })
