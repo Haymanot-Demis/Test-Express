@@ -84,5 +84,3 @@ leaderRouter.route('/:id')
     })
 
 module.exports = leaderRouter;
-
-module.exports = leaderRouter;

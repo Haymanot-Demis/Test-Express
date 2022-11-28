@@ -7,20 +7,53 @@ const mongoose = require('mongoose');
 const dishRouter = require('./routes/dishRouter');
 const promoRouter = require('./routes/promoRouter');
 const leaderRouter = require('./routes/leaderRouter');
-const Dishes = require('./models/dishes');
-const Promtions = require('./models/promotions');
-const Leaders = require('./models/leaders');
+// const Dishes = require('./models/dishes');
+// const Promotions = require('./models/promotions');
+// const Leaders = require('./models/leaders');
 
 app.use(bodyParser.json());
 const publicfolder = path.join(__dirname, 'public');
 app.use(express.static(path.join(__dirname, 'public')));
 
-mongoose.connect('mongodb://localhost/ConFusion')
-    .then((db) => {
-        console.log("connected successfully");
-    }).catch((err) => {
-        console.log("Error ", err.message);
-    });
+app.use((req, res, next) => {
+    console.log(req.headers);
+    var authHeader = req.headers.authorization;
+    if (!authHeader) {
+        var err = new Error('You are not authenticated!');
+        res.setHeader('WWW-Authenticate', 'Basic');
+        err.status = 401;
+        next(err);
+        return;
+    }
+
+    var auth = new Buffer.from(authHeader.split(' ')[1], 'base64').toString().split(':');
+    var user = auth[0];
+    var pass = auth[1];
+    if (user == 'admin' && pass == 'password') {
+        next(); // authorized
+    } else {
+        var err = new Error('You are not authenticated!');
+        res.setHeader('WWW-Authenticate', 'Basic');
+        err.status = 401;
+        next(err);
+    }
+})
+
+mongoose.connect('mongodb://localhost/ConFusion', (err) => { // callback based
+    if (err) {
+        console.log("DB connection error");
+        console.log(err);
+    } else
+        console.log("Connected Successfully");
+})
+
+/* OR */
+// mongoose.connect('mongodb://localhost/ConFusion') //promise based
+//     .then((db) => {
+//         console.log("connected successfully");
+//     }).catch((err) => {
+//         console.log("Error ", err.message);
+//     });
 
 
 app.use('/dishes', dishRouter);
