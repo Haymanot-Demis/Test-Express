@@ -2,19 +2,30 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const path = require('path');
+const mongoose = require('mongoose');
+
 const dishRouter = require('./routes/dishRouter');
 const promoRouter = require('./routes/promoRouter');
 const leaderRouter = require('./routes/leaderRouter');
-const { op } = require('./controller/Connetion')
+const Dishes = require('./models/dishes');
+const Promtions = require('./models/promotions');
+const Leaders = require('./models/leaders');
 
 app.use(bodyParser.json());
 const publicfolder = path.join(__dirname, 'public');
 app.use(express.static(path.join(__dirname, 'public')));
+
+mongoose.connect('mongodb://localhost/ConFusion')
+    .then((db) => {
+        console.log("connected successfully");
+    }).catch((err) => {
+        console.log("Error ", err.message);
+    });
+
+
 app.use('/dishes', dishRouter);
 app.use('/promotions', promoRouter)
 app.use('/leaders', leaderRouter)
-
-op()
     // app.all('/dishes', (req, res, next) => {
     //         res.statusCode = 200;
     //         res.setHeader('Content-Type', 'text/html');
