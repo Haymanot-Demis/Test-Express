@@ -5,25 +5,46 @@ const path = require('path');
 const dishRouter = require('./routes/dishRouter');
 const promoRouter = require('./routes/promoRouter');
 const leaderRouter = require('./routes/leaderRouter');
-const { op } = require('./controller/Connetion')
+const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser');
+import expresession from 'express-session';
+const FileStore = require('express-file-store')
 
+const connect = mongoose.connect("mongodb://0.0.0.0:27017/ConFusion")
+
+connect.then((result) => {
+    console.log("DB Connected successfully");
+}).catch((err) => {
+    console.log("err");
+})
+
+const Dishes = require('./models/models')
+const Schema = mongoose.Schema
+const comments = new Schema()
+
+// var URL = 'mongodb://localhost:27017/conFusion'
+// mongoose.connect(URL)
+app.use(cookieParser('haymanot'));
+app.use(expresession({
+    name:"session_name",
+    secret:'haymanot',
+    saveUninitialized:false,
+    resave:false,
+    store:new FileStore()
+}))
 app.use(bodyParser.json());
-const publicfolder = path.join(__dirname, 'public');
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/dishes', dishRouter);
 app.use('/promotions', promoRouter)
 app.use('/leaders', leaderRouter)
 
-op()
-    // app.all('/dishes', (req, res, next) => {
-    //         res.statusCode = 200;
-    //         res.setHeader('Content-Type', 'text/html');
-    //         next();
-    //     })
-    // get request 
+app.use
+
 app.get("/", (req, res) => {
     res.redirect('/home.html');
 })
+
+
 
 // // multiple dishes
 // app.get("/dishes", (req, res) => {

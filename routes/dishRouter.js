@@ -1,6 +1,9 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const dishRouter = express.Router();
+const Dishes = require('../models/models')
+const mongoose = require('mongoose')
+
 
 dishRouter.use(bodyParser.json())
 
@@ -11,17 +14,27 @@ dishRouter.route('/')
         next();
     })
     .get((req, res, next) => {
-        res.end('Will send all the dishes to you!');
+        // Dishes.find({})
+        // .then((data) => {
+        //     res.json(data)
+        //     res.send("sent")
+        // })
+        res.send("sent")
+        next()
     })
     .post((req, res, next) => {
+        Dishes.insertMany(req.body)
         res.end('Will add the dish: ' + req.body.name + ' with details: ' + req.body.description);
+        next()
     })
     .put((req, res, next) => {
         res.statusCode = 403;
         res.end('PUT operation not supported on /dishes');
+        next()
     })
     .delete((req, res, next) => {
         res.end('Deleting all dishes');
+        next()
     });
 
 
