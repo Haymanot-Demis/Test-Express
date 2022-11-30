@@ -2,13 +2,21 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const path = require('path');
+const mongoose = require('mongoose');
+
 const dishRouter = require('./routes/dishRouter');
 const promoRouter = require('./routes/promoRouter');
 const leaderRouter = require('./routes/leaderRouter');
+<<<<<<< HEAD
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 import expresession from 'express-session';
 const FileStore = require('express-file-store')
+=======
+// const Dishes = require('./models/dishes');
+// const Promotions = require('./models/promotions');
+// const Leaders = require('./models/leaders');
+>>>>>>> f31e11af0a49d40fb157963b6bc5da63cbf2c35d
 
 const connect = mongoose.connect("mongodb://0.0.0.0:27017/ConFusion")
 
@@ -34,12 +42,63 @@ app.use(expresession({
 }))
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use((req, res, next) => {
+    console.log(req.headers);
+    var authHeader = req.headers.authorization;
+    if (!authHeader) {
+        var err = new Error('You are not authenticated!');
+        res.setHeader('WWW-Authenticate', 'Basic');
+        err.status = 401;
+        next(err);
+        return;
+    }
+
+    var auth = new Buffer.from(authHeader.split(' ')[1], 'base64').toString().split(':');
+    var user = auth[0];
+    var pass = auth[1];
+    if (user == 'admin' && pass == 'password') {
+        next(); // authorized
+    } else {
+        var err = new Error('You are not authenticated!');
+        res.setHeader('WWW-Authenticate', 'Basic');
+        err.status = 401;
+        next(err);
+    }
+})
+
+mongoose.connect('mongodb://localhost/ConFusion', (err) => { // callback based
+    if (err) {
+        console.log("DB connection error");
+        console.log(err);
+    } else
+        console.log("Connected Successfully");
+})
+
+/* OR */
+// mongoose.connect('mongodb://localhost/ConFusion') //promise based
+//     .then((db) => {
+//         console.log("connected successfully");
+//     }).catch((err) => {
+//         console.log("Error ", err.message);
+//     });
+
+
 app.use('/dishes', dishRouter);
 app.use('/promotions', promoRouter)
 app.use('/leaders', leaderRouter)
+<<<<<<< HEAD
 
 app.use
 
+=======
+    // app.all('/dishes', (req, res, next) => {
+    //         res.statusCode = 200;
+    //         res.setHeader('Content-Type', 'text/html');
+    //         next();
+    //     })
+    // get request 
+>>>>>>> f31e11af0a49d40fb157963b6bc5da63cbf2c35d
 app.get("/", (req, res) => {
     res.redirect('/home.html');
 })

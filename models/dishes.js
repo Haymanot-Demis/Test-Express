@@ -1,25 +1,28 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+require('mongoose-currency').loadType(mongoose);
+var Currency = mongoose.Types.Currency;
 
 const commentSchema = new Schema({
     rating: {
-        type: String,
+        type: Number,
         min: 1,
         max: 5,
         required: true
     },
     comment: {
         type: String,
-        required:true
+        required: true
     },
     author: {
         type: String,
-        required:true
+        required: true
     }
-},{
-    timestamps:true
-})
-const DishesSchema = new Schema({
+}, {
+    timestamps: true
+});
+
+const dishSchema = new Schema({
     name: {
         type: String,
         required: true,
@@ -42,19 +45,20 @@ const DishesSchema = new Schema({
         default: ''
     },
     price: {
-        type: Number,
+        type: Currency,
         required: true,
         min: 0
     },
     featured: {
         type: Boolean,
-        default:false      
+        default: false
     },
-    comments:[commentSchema]
+    comments: [commentSchema]
 }, {
     timestamps: true
 });
 
-const Dishes = mongoose.model('dish', DishesSchema);
+
+const Dishes = mongoose.model('Dish', dishSchema);
 
 module.exports = Dishes
