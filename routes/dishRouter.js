@@ -2,7 +2,6 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const Dishes = require('../models/dishes');
 const dishRouter = express.Router();
-const Dishes = require('../models/models')
 const mongoose = require('mongoose')
 
 
@@ -20,23 +19,6 @@ dishRouter.route('/')
                 console.log(err)
             })
     })
-<<<<<<< HEAD
-    .get((req, res, next) => {
-        // Dishes.find({})
-        // .then((data) => {
-        //     res.json(data)
-        //     res.send("sent")
-        // })
-        res.send("sent")
-        next()
-    })
-    .post((req, res, next) => {
-        Dishes.insertMany(req.body)
-        res.end('Will add the dish: ' + req.body.name + ' with details: ' + req.body.description);
-        next()
-    })
-    .put((req, res, next) => {
-=======
     .post((req, res) => {
         Dishes.create(req.body)
             .then(result => {
@@ -45,16 +27,10 @@ dishRouter.route('/')
             })
     })
     .put((req, res) => {
->>>>>>> f31e11af0a49d40fb157963b6bc5da63cbf2c35d
         res.statusCode = 403;
         res.end('PUT operation not supported on /dishes');
         next()
     })
-<<<<<<< HEAD
-    .delete((req, res, next) => {
-        res.end('Deleting all dishes');
-        next()
-=======
     .delete((req, res) => {
         Dishes.deleteMany({})
             .then((result) => {
@@ -64,7 +40,6 @@ dishRouter.route('/')
                 res.send(result)
             })
             .catch(err => console.log(err))
->>>>>>> f31e11af0a49d40fb157963b6bc5da63cbf2c35d
     });
 
 

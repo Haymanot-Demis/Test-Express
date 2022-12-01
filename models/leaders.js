@@ -1,9 +1,7 @@
-const { default: mongoose } = require('mongoose');
-const mongooose = require('mongoose');
-const { findOneAndUpdate } = require('./dishes');
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-require('mongoose-currency').loadType(mongoose);
-var Currency = mongoose.Types.Currency;
+// require('mongoose-currency').loadType(mongoose);
+// var Currency = mongoose.Types.Currency;
 
 const leaderShema = new Schema({
     name: {
