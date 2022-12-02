@@ -11,6 +11,8 @@ const cookieParser = require('cookie-parser');
 const expresession = require('express-session');
 const userRouter = require('./routes/userRouter');
 const FileStore = require('express-file-store');
+const passport = require('passport');
+const authenticate = require('./controller/authenticate')
 
 
 app.use(cookieParser('haymanot'));
@@ -19,25 +21,22 @@ app.use(expresession({
     secret:'haymanot',
     saveUninitialized:false,
     resave:false
-}))
+}));
+
+app.use(passport.initialize())
+app.use(passport.session())
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/users', userRouter)
 
+// user auth
 app.use((req, res, next) => {
-    if(!req.session.user){
+    if(!req.user){
         var err = new Error('You are not authenticated!');
         err.status = 403;
         next(err);
-        return;
     }else{
-        if(req.session.user === 'authemticated'){
-            next();
-        }else{
-            var err = new Error('You are not authenticated!');
-            err.status = 403;
-            next(err);
-        }
+      next();
     }
 })
 
