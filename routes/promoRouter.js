@@ -2,7 +2,7 @@ const express = require('express');
 const promoRouter = express.Router();
 const bodyParser = require('body-parser');
 const Promotions = require('../models/promotions');
-const { response } = require('express');
+const { verifyToken } =require('../controller/authenticate');
 
 promoRouter.use(bodyParser.json())
 
@@ -12,7 +12,7 @@ promoRouter.route('/')
         res.setHeader('Content-Type', 'application/json');
         next();
     })
-    .get((req, res, next) => {
+    .get(verifyToken, (req, res, next) => {
         Promotions.find({})
             .then(promotions => {
                 res.send(promotions)
@@ -21,7 +21,7 @@ promoRouter.route('/')
                 console.log(err.message);
             })
     })
-    .post((req, res, next) => {
+    .post(verifyToken, (req, res, next) => {
         Promotions.create(req.body)
             .then(result => {
                 res.send(result)
@@ -30,11 +30,11 @@ promoRouter.route('/')
                 console.log(err.message);
             })
     })
-    .put((req, res, next) => {
+    .put(verifyToken, (req, res, next) => {
         res.statusCode = 403;
         res.end('PUT operation not supported on /promotions');
     })
-    .delete((req, res, next) => {
+    .delete(verifyToken, (req, res, next) => {
         Promotions.deleteMany({})
             .then(response => {
                 res.send(response)
@@ -55,11 +55,11 @@ promoRouter.route('/:id')
         console.log(promotion);
         res.send(promotion)
     })
-    .post((req, res) => {
+    .post(verifyToken, (req, res) => {
         res.statusCode = 403;
         res.send("POST operation not supported on /promotions/" + req.params.id);
     })
-    .put((req, res) => {
+    .put(verifyToken, (req, res) => {
         Promotions.findByIdAndUpdate(req.params.id, {
                 $set: req.body
             }, { new: true, returnDocument: 'after' })
@@ -72,7 +72,7 @@ promoRouter.route('/:id')
                 console.log(err);
             })
     })
-    .delete((req, res) => {
+    .delete(verifyToken, (req, res) => {
         Promotions.deleteOne({ _id: req.params.id })
             .then(response => {
                 res.send(response)

@@ -1,7 +1,9 @@
 const express = require('express');
 const leaderRouter = express.Router();
 const bodyParser = require('body-parser');
-const Leaders = require('../models/leaders')
+const Leaders = require('../models/leaders');
+const { verifyToken } =require('../controller/authenticate');
+
 
 leaderRouter.use(bodyParser.json())
 
@@ -20,7 +22,7 @@ leaderRouter.route('/')
                 console.log(err.message);
             })
     })
-    .post((req, res, next) => {
+    .post(verifyToken, (req, res, next) => {
         Leaders.create(req.body)
             .then(result => {
                 res.send(result)
@@ -29,11 +31,11 @@ leaderRouter.route('/')
                 console.log(err.message);
             })
     })
-    .put((req, res, next) => {
+    .put(verifyToken, (req, res, next) => {
         res.statusCode = 403;
         res.end('PUT operation not supported on /promotions');
     })
-    .delete((req, res, next) => {
+    .delete(verifyToken, (req, res, next) => {
         Leaders.deleteMany({})
             .then(response => {
                 res.send(response)
@@ -54,11 +56,11 @@ leaderRouter.route('/:id')
         console.log(leader);
         res.send(leader)
     })
-    .post((req, res) => {
+    .post(verifyToken, (req, res) => {
         res.statusCode = 403;
         res.send("POST operation not supported on /promotions/" + req.params.id);
     })
-    .put((req, res) => {
+    .put(verifyToken, (req, res) => {
         Leaders.findByIdAndUpdate(req.params.id, {
                 $set: req.body
             }, { new: true, returnDocument: 'after' })
@@ -71,7 +73,7 @@ leaderRouter.route('/:id')
                 console.log(err);
             })
     })
-    .delete((req, res) => {
+    .delete(verifyToken, (req, res) => {
         Leaders.deleteOne({ _id: req.params.id })
             .then(response => {
                 res.send(response)

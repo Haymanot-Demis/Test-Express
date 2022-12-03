@@ -12,7 +12,7 @@ const expresession = require('express-session');
 const userRouter = require('./routes/userRouter');
 const FileStore = require('express-file-store');
 const passport = require('passport');
-const authenticate = require('./controller/authenticate')
+const {verifyToken} = require('./controller/authenticate')
 
 
 app.use(cookieParser('haymanot'));
@@ -24,21 +24,21 @@ app.use(expresession({
 }));
 
 app.use(passport.initialize())
-app.use(passport.session())
+// app.use(passport.session())
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/users', userRouter)
 
-// user auth
-app.use((req, res, next) => {
-    if(!req.user){
-        var err = new Error('You are not authenticated!');
-        err.status = 403;
-        next(err);
-    }else{
-      next();
-    }
-})
+// // user auth
+// app.use((req, res, next) => {
+//     if(!req.user){
+//         var err = new Error('You are not authenticated!');
+//         err.status = 403;
+//         next(err);
+//     }else{
+//       next();
+//     }
+// })
 
 mongoose.connect('mongodb://127.0.0.1:27017/ConFusion', (err) => { // callback based
     if (err) {
@@ -56,6 +56,8 @@ mongoose.connect('mongodb://127.0.0.1:27017/ConFusion', (err) => { // callback b
 //         console.log("Error ", err.message);
 //     });
 
+// verifying the user before accessing the routes
+// app.use(verifyToken);
 
 app.use('/dishes', dishRouter);
 app.use('/promotions', promoRouter)
