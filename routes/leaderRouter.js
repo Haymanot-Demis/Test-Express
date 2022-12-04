@@ -2,7 +2,7 @@ const express = require('express');
 const leaderRouter = express.Router();
 const bodyParser = require('body-parser');
 const Leaders = require('../models/leaders');
-const { verifyToken } =require('../controller/authenticate');
+const { verifyToken,verifyAdmin,verifyOrdinaryUser } =require('../controller/authenticate');
 
 
 leaderRouter.use(bodyParser.json())
@@ -22,7 +22,7 @@ leaderRouter.route('/')
                 console.log(err.message);
             })
     })
-    .post(verifyToken, (req, res, next) => {
+    .post(verifyToken, verifyAdmin, (req, res, next) => {
         Leaders.create(req.body)
             .then(result => {
                 res.send(result)
@@ -31,11 +31,11 @@ leaderRouter.route('/')
                 console.log(err.message);
             })
     })
-    .put(verifyToken, (req, res, next) => {
+    .put(verifyToken, verifyAdmin, (req, res, next) => {
         res.statusCode = 403;
         res.end('PUT operation not supported on /promotions');
     })
-    .delete(verifyToken, (req, res, next) => {
+    .delete(verifyToken, verifyAdmin, (req, res, next) => {
         Leaders.deleteMany({})
             .then(response => {
                 res.send(response)
@@ -52,20 +52,23 @@ leaderRouter.route('/:id')
         next();
     })
     .get(async(req, res) => {
-        let leader = await Leaders.findById(req.params.id, 'name price')
-        console.log(leader);
-        res.send(leader)
+        let leader = await Leaders.findById(req.params.id, 'name price');
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(leader)
     })
-    .post(verifyToken, (req, res) => {
+    .post(verifyToken, verifyAdmin, (req, res) => {
         res.statusCode = 403;
         res.send("POST operation not supported on /promotions/" + req.params.id);
     })
-    .put(verifyToken, (req, res) => {
+    .put(verifyToken, verifyAdmin, (req, res) => {
         Leaders.findByIdAndUpdate(req.params.id, {
                 $set: req.body
             }, { new: true, returnDocument: 'after' })
             .then(result => {
-                res.send(result)
+                res.statusCode = 200;
+                res.setHeader('Content-Type', 'application/json');
+                res.json(result)
             })
             .catch(err => {
                 res.statusCode = 401
@@ -73,7 +76,7 @@ leaderRouter.route('/:id')
                 console.log(err);
             })
     })
-    .delete(verifyToken, (req, res) => {
+    .delete(verifyToken, verifyAdmin,  (req, res) => {
         Leaders.deleteOne({ _id: req.params.id })
             .then(response => {
                 res.send(response)

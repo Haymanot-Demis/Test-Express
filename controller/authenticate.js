@@ -37,5 +37,22 @@ passport.use(new jwtStrategy({jwtFromRequest : ExtractJwt.fromAuthHeaderAsBearer
              }))
 
 const verifyToken = passport.authenticate('jwt', {session:false});
+const verifyAdmin = (req, res, next) => {
+    if(req.user.admin){
+        return next();
+    }
+    const err = new Error("You are not autherized to perform this operation");
+    res.statusCode = 403;
+    return next(err);
+}
 
-module.exports = {getToken, verifyToken}
+const verifyOrdinaryUser = (req, res, next) => {
+    if(!req.user.admin){
+        return next();
+    }
+    const err = new Error("You are not autherized to perform this operation");
+    res.statusCode = 403;
+    return next(err);
+}
+
+module.exports = {getToken, verifyToken, verifyAdmin, verifyOrdinaryUser}

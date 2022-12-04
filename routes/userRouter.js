@@ -3,10 +3,21 @@ const userRouter = express.Router();
 const bodyParser = require('body-parser');
 const Users = require('../models/users');
 const passport = require('passport');
-const { getToken } = require('../controller/authenticate');
+const { getToken, verifyAdmin, verifyUser } = require('../controller/authenticate');
 
 userRouter.use(bodyParser.json());
 
+userRouter.route('/')
+.get(passport.authenticate('local'), verifyAdmin, (req, res, next) => {
+  console.log(req.user);
+  Users.find({})
+  .then(users => {
+    res.statusCode = 200;
+    res.setHeader('Content-type','application/json');
+    res.json(users)
+  })
+  .catch(err => next(err))
+})
 
 userRouter.post('/signup', (req, res, next) => {
     console.log("body", req.body);
@@ -22,9 +33,21 @@ userRouter.post('/signup', (req, res, next) => {
             return res.send({"err":err})
            }
 
-           res.statusCode = 200;
-           res.contentType('application/json');
-           res.send({"success":"true", "status":"Registration successfull"});                 
+           if(req.body.firstname){
+            user.firstname = req.body.firstname
+           }
+           
+           if(req.body.lastname){
+            user.lastname = req.body.lastname
+           }
+           user.save()
+           .then(user => {
+              res.statusCode = 200;
+              res.contentType('application/json');
+              res.send({"success":"true", "status":"Registration successfull"});  
+           })
+           .catch(err => next(err))
+                         
         });
 
 
@@ -62,5 +85,6 @@ userRouter.post('/signin', passport.authenticate('local'), (req, res, next) => {
     res.setHeader('Content-type','application/json');
     res.json({"success" : "true", token,"status":"You are successfully authenticated"}); 
 })
+
 
 module.exports = userRouter;

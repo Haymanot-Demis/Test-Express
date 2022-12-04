@@ -2,7 +2,7 @@ const express = require('express');
 const promoRouter = express.Router();
 const bodyParser = require('body-parser');
 const Promotions = require('../models/promotions');
-const { verifyToken } =require('../controller/authenticate');
+const { verifyToken, verifyAdmin, verifyOrdinaryUser } =require('../controller/authenticate');
 
 promoRouter.use(bodyParser.json())
 
@@ -21,7 +21,7 @@ promoRouter.route('/')
                 console.log(err.message);
             })
     })
-    .post(verifyToken, (req, res, next) => {
+    .post(verifyToken, verifyAdmin, (req, res, next) => {
         Promotions.create(req.body)
             .then(result => {
                 res.send(result)
@@ -30,11 +30,11 @@ promoRouter.route('/')
                 console.log(err.message);
             })
     })
-    .put(verifyToken, (req, res, next) => {
+    .put(verifyToken, verifyAdmin, (req, res, next) => {
         res.statusCode = 403;
         res.end('PUT operation not supported on /promotions');
     })
-    .delete(verifyToken, (req, res, next) => {
+    .delete(verifyToken, verifyAdmin, (req, res, next) => {
         Promotions.deleteMany({})
             .then(response => {
                 res.send(response)
@@ -55,11 +55,11 @@ promoRouter.route('/:id')
         console.log(promotion);
         res.send(promotion)
     })
-    .post(verifyToken, (req, res) => {
+    .post(verifyToken, verifyAdmin, (req, res) => {
         res.statusCode = 403;
         res.send("POST operation not supported on /promotions/" + req.params.id);
     })
-    .put(verifyToken, (req, res) => {
+    .put(verifyToken, verifyAdmin, (req, res) => {
         Promotions.findByIdAndUpdate(req.params.id, {
                 $set: req.body
             }, { new: true, returnDocument: 'after' })
@@ -72,7 +72,7 @@ promoRouter.route('/:id')
                 console.log(err);
             })
     })
-    .delete(verifyToken, (req, res) => {
+    .delete(verifyToken, verifyAdmin, (req, res) => {
         Promotions.deleteOne({ _id: req.params.id })
             .then(response => {
                 res.send(response)
