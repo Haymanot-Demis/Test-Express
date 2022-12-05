@@ -10,6 +10,7 @@ const leaderRouter = require('./routes/leaderRouter');
 const cookieParser = require('cookie-parser');
 const expresession = require('express-session');
 const userRouter = require('./routes/userRouter');
+const uploadRouter = require('./routes/uploadRouter');
 const FileStore = require('express-file-store');
 const passport = require('passport');
 const {verifyToken} = require('./controller/authenticate')
@@ -62,6 +63,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/ConFusion', (err) => { // callback b
 app.use('/dishes', dishRouter);
 app.use('/promotions', promoRouter)
 app.use('/leaders', leaderRouter)
+app.use('/imageUpload', uploadRouter)
 
 app.get("/", (req, res) => {
     res.redirect('/home.html');
@@ -69,8 +71,11 @@ app.get("/", (req, res) => {
 
 
 app.listen(5000, () => {
-    console.log("Server is running on port 5000")
-})
+    console.log("Server is running on port 5000","secPort", app.get('secPort'));
+    
+});
+
+module.exports = app
 
 
 
