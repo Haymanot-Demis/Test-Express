@@ -3,6 +3,7 @@ const app = express();
 const bodyParser = require('body-parser');
 const path = require('path');
 const mongoose = require('mongoose');
+const cors =  require('cors');
 
 const dishRouter = require('./routes/dishRouter');
 const promoRouter = require('./routes/promoRouter');
@@ -15,7 +16,7 @@ const FileStore = require('express-file-store');
 const passport = require('passport');
 const {verifyToken} = require('./controller/authenticate')
 
-
+app.use(cors())
 app.use(cookieParser('haymanot'));
 app.use(expresession({
     name:"session_name",

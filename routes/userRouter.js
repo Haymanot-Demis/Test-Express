@@ -86,5 +86,15 @@ userRouter.post('/signin', passport.authenticate('local'), (req, res, next) => {
     res.json({"success" : "true", token,"status":"You are successfully authenticated"}); 
 })
 
+userRouter.get('/facebook/token', passport.authenticate('facebook-token'), (req, res) => {
+  if(req.user) {
+    const token = getToken({_id:req.user._id})
+    console.log(token);
+    res.statusCode = 200;
+    res.setHeader('Content-type','application/json');
+    res.json({"success" : "true", token,"status":"You are successfully authenticated"}); 
+  }
+});
+
 
 module.exports = userRouter;
