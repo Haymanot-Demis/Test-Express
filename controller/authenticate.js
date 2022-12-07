@@ -28,7 +28,6 @@ passport.use(new jwtStrategy({jwtFromRequest : ExtractJwt.fromAuthHeaderAsBearer
                         return done(err,false, "Internal verification error occured");
                     }
                     else if(user){
-                        console.log("user id = ",jwt_payload);
                         return done(null, user);
                     }
                     else{

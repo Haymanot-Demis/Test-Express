@@ -12,6 +12,7 @@ const cookieParser = require('cookie-parser');
 const expresession = require('express-session');
 const userRouter = require('./routes/userRouter');
 const uploadRouter = require('./routes/uploadRouter');
+const favouriteRouter = require('./routes/favouriteRouter');
 const FileStore = require('express-file-store');
 const passport = require('passport');
 const {verifyToken} = require('./controller/authenticate')
@@ -65,6 +66,7 @@ app.use('/dishes', dishRouter);
 app.use('/promotions', promoRouter)
 app.use('/leaders', leaderRouter)
 app.use('/imageUpload', uploadRouter)
+app.use('/favourites', favouriteRouter)
 
 app.get("/", (req, res) => {
     res.redirect('/home.html');
