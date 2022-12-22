@@ -78,12 +78,33 @@ userRouter.post('/signup', (req, res, next) => {
     // }))
 })
 
-userRouter.post('/signin', passport.authenticate('local'), (req, res, next) => {
-    const token = getToken(req.user)
-    console.log(token);
-    res.statusCode = 200;
-    res.setHeader('Content-type','application/json');
-    res.json({"success" : "true", token,"status":"You are successfully authenticated"}); 
+userRouter.post('/signin', (req, res, next) => {
+  passport.authenticate('local', (err, user, info) => {
+    if (err) {
+      return next(err)
+    }
+
+    if(!user){
+      res.statusCode = 401;
+      res.setHeader('Content-type','application/json');
+      res.json({"success" : false, "status":"Login Unsuccesful", info}); 
+    }else{
+      req.logIn(user, (err) => {
+        if (err) {
+          res.statusCode = 401;
+          res.setHeader('Content-type','application/json');
+          res.json({"success" : false, "status":"Login Unsuccesful", err}); 
+        }
+        const token = getToken(req.user)
+        console.log(token);
+        res.statusCode = 200;
+        res.setHeader('Content-type','application/json');
+        res.json({"success" : "true", token,"status":"You are successfully authenticated"}); 
+      })
+    }
+
+  }) (req, res, next);
+   
 })
 
 userRouter.get('/facebook/token', passport.authenticate('facebook-token'), (req, res) => {

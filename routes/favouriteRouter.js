@@ -21,11 +21,20 @@ favouriteRouter.route('/')
     })
 })
 .post(verifyToken, (req, res, next) => {
-    Favourites.findOne({user : req.body.user})
-    .then(dishes => {
-        if(dishes){
-            dishes.dishes.push(req.body.dishes);
-            dishes.save()
+    Favourites.findOne({user : req.user._id})
+    .then(fav => {
+        if(fav){
+            console.log(fav);
+            console.log(req.body);
+            for(dishid of req.body){
+                if (fav.dishes.find(IDObj => IDObj._id.valueOf() === dishid._id)){
+                    continue;
+                }
+                console.log(dishid);
+                fav.dishes.push(dishid);
+            }
+            console.log(fav.dishes);
+            fav.save()
             .then(dishes => {
                 res.statusCode = 200;
                 res.contentType('application/json');
@@ -35,7 +44,7 @@ favouriteRouter.route('/')
                 console.log(err)
             })
         }
-        else if(!dishes){
+        else if(!fav){
             Favourites.create({user: req.user._id, dishes: req.body})
             .then(dishes => {
                 res.statusCode = 200;
@@ -97,7 +106,13 @@ favouriteRouter.route('/:dishId')
     .then(favdishes => {
         if(favdishes){
             console.log(favdishes.dishes);
-            favdishes.dishes.push(req.params.dishId);
+            const index = favdishes.dishes.indexOf(req.params.dishId);
+            if(index == -1){
+                favdishes.dishes.indexOf(req.params.dishId);
+            }else{
+                res.statusCode = 200;
+               return res.send("This dish already exists in your favourites")
+            }
             favdishes.save()
             .then(newdishes => {
                 res.statusCode = 200;
@@ -119,7 +134,6 @@ favouriteRouter.route('/:dishId')
                 console.log(err)
             })
         }
-       
     })
     .catch(err => {
         console.log(err)
@@ -135,7 +149,7 @@ favouriteRouter.route('/:dishId')
         console.log(dish);
 
         dish.dishes = dish.dishes.filter((favDish) => {
-            console.log(favDish.valueOf() !== req.params.dishId);
+            // console.log(favDish.valueOf() !== req.params.dishId);
             return favDish.valueOf() !== req.params.dishId
         });
 

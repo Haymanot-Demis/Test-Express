@@ -9,7 +9,7 @@ const dishRouter = require('./routes/dishRouter');
 const promoRouter = require('./routes/promoRouter');
 const leaderRouter = require('./routes/leaderRouter');
 const cookieParser = require('cookie-parser');
-const expresession = require('express-session');
+const expressSession = require('express-session');
 const userRouter = require('./routes/userRouter');
 const uploadRouter = require('./routes/uploadRouter');
 const favouriteRouter = require('./routes/favouriteRouter');
@@ -19,7 +19,7 @@ const {verifyToken} = require('./controller/authenticate')
 
 app.use(cors())
 app.use(cookieParser('haymanot'));
-app.use(expresession({
+app.use(expressSession({
     name:"session_name",
     secret:'haymanot',
     saveUninitialized:false,
@@ -32,7 +32,7 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/users', userRouter)
 
-// // user auth
+// user auth
 // app.use((req, res, next) => {
 //     if(!req.user){
 //         var err = new Error('You are not authenticated!');

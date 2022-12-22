@@ -57,7 +57,6 @@ passport.use(new facebookStarategy({
         }
     })
 }
-
 ))
 const verifyToken = passport.authenticate('jwt', {session:false});
 const verifyAdmin = (req, res, next) => {
